@@ -1,6 +1,13 @@
 import type { Expense, Day } from "../types";
 
-const ExpenseList: React.FC<{ day: Day }> = ({ day }) => {
+
+type ExpenseListProps = {
+  day: Day;
+  onEdit: (expense: Expense) => void;
+  onDelete: (expense: Expense) => void;
+};
+
+const ExpenseList: React.FC<ExpenseListProps> = ({ day, onDelete, onEdit }) => {
   return (
     <div className="w-full flex justify-center items-center max-h-[calc(100vh-265px)] overflow-y-auto">
       <div className="w-[90%]">

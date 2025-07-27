@@ -1,8 +1,22 @@
 import { useTravelContext } from "../context/TravelContext";
+import type { Expense } from "../types";
 import ExpenseModal from "./ExpenseModal";
 
 const Footer: React.FC = () => {
-  const { state } = useTravelContext();
+  const { state, dispatch } = useTravelContext();
+  const handleSubmit = (expense: Expense, date: string) => {
+    dispatch({
+      type: "ENSURE_DAY",
+      travelId: state.selectedTravelID!,
+      dayDate: date,
+    });
+    dispatch({
+      type: "ADD_EXPENSE",
+      travelId: state.selectedTravelID!,
+      dayDate: date,
+      expense,
+    });
+  };
   const actualTravel = state.travels.find(
     (travel) => travel.id === state.selectedTravelID
   );
@@ -11,7 +25,7 @@ const Footer: React.FC = () => {
     <div className="w-full fixed z-50 bottom-0 left-0 p-5 right-0 flex justify-between bg-slate-100 border-t border-slate-300">
       <div className="font-semibold">{actualTravel?.name}</div>
       <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2">
-        <ExpenseModal />
+        <ExpenseModal handleSave={handleSubmit} />
       </div>
       <div className="font-semibold">
         Total: $

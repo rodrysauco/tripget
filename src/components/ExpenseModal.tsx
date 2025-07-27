@@ -1,8 +1,11 @@
 import { useState } from "react";
 import ExpenseForm from "./ExpenseForm";
 import Modal from "./Modal";
+import type { Expense } from "../types";
 
-const ExpenseModal: React.FC = () => {
+const ExpenseModal: React.FC<{
+  handleSave: (expense: Expense, date: string) => void;
+}> = ({ handleSave }) => {
   const [isOpen, setIsOpen] = useState(false);
 
   const openModal = () => setIsOpen(true);
@@ -19,7 +22,7 @@ const ExpenseModal: React.FC = () => {
 
       {isOpen && (
         <Modal onClose={closeModal}>
-          <ExpenseForm afterSubmit={closeModal} />
+          <ExpenseForm onSave={handleSave} closeModal={closeModal} />
         </Modal>
       )}
     </>

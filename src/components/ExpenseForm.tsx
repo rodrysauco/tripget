@@ -5,6 +5,7 @@ import { useTravelContext } from "../context/TravelContext";
 import { useParams } from "react-router-dom";
 import { v4 as uuidv4 } from "uuid";
 import type { Expense } from "../types";
+import { useEffect } from "react";
 
 const schema = z.object({
   title: z.string().min(1),
@@ -16,11 +17,19 @@ const schema = z.object({
 
 type FormData = z.infer<typeof schema>;
 
-const ExpenseForm: React.FC<{ afterSubmit: () => void }> = ({
-  afterSubmit,
+type ExpenseFormProps = {
+  initialData?: Expense;
+  onSave: (expense: Expense, date: string) => void;
+  closeModal: () => void;
+};
+
+const ExpenseForm: React.FC<ExpenseFormProps> = ({
+  closeModal,
+  onSave,
+  initialData,
 }) => {
   const { id: travelId } = useParams<{ id: string }>();
-  const { state, dispatch } = useTravelContext();
+  const { state } = useTravelContext();
   const travel = state.travels.find((t) => t.id === state.selectedTravelID);
   const { customCurrency, conversionRate } = travel!.dailyBudget;
 
@@ -37,6 +46,20 @@ const ExpenseForm: React.FC<{ afterSubmit: () => void }> = ({
       currency: "USD",
     },
   });
+
+  useEffect(() => {
+    if (initialData) {
+      reset({
+        title: initialData.title,
+        description: initialData.description,
+        currency: initialData.currency === "USD" ? "USD" : "CUSTOM",
+        amount:
+          initialData.currency === "USD"
+            ? initialData.amountUSD
+            : initialData.amountOriginal,
+      });
+    }
+  }, [initialData, reset]);
 
   const amount = watch("amount") || 0;
   const currency = watch("currency");
@@ -57,12 +80,9 @@ const ExpenseForm: React.FC<{ afterSubmit: () => void }> = ({
       amountOriginal: data.amount,
       currency: data.currency,
     } as Expense;
-
-    dispatch({ type: "ENSURE_DAY", travelId, dayDate: data.date });
-    dispatch({ type: "ADD_EXPENSE", travelId, dayDate: data.date, expense });
-
-    reset({ date: new Date().toISOString().split("T")[0] });
-    afterSubmit();
+    onSave(expense, data.date);
+    reset();
+    closeModal();
   };
 
   return (
@@ -111,7 +131,7 @@ const ExpenseForm: React.FC<{ afterSubmit: () => void }> = ({
 
       <div className="flex justify-around items-center">
         <button
-          onClick={afterSubmit}
+          onClick={closeModal}
           type="button"
           className="bg-gray-400 text-white px-4 py-2"
         >
