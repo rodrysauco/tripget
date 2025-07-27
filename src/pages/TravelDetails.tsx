@@ -2,6 +2,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { useTravelContext } from "../context/TravelContext";
 import DayList from "../components/DayList";
 import { useEffect } from "react";
+import { ArrowLeftIcon } from "@heroicons/react/24/outline";
 
 const TravelDetails: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -36,7 +37,7 @@ const TravelDetails: React.FC = () => {
 
   return (
     <div className="flex flex-col justify-center items-center">
-      <button className="self-start p-1 m-2 text-[14px] border border-slate-400 rounded text-slate-400" onClick={goBack}>Volver</button>
+      <button className="self-start p-1 m-2 text-[14px] flex gap-1 border border-slate-400 rounded text-slate-400" onClick={goBack}> <ArrowLeftIcon className="w-5 h-5"/>Volver</button>
       <div
         className={`${total > 0 ? "mb-2 text-green-600" : "mb-2 text-red-600"}`}
       >

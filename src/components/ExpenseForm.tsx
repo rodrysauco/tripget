@@ -21,16 +21,18 @@ type ExpenseFormProps = {
   initialData?: Expense;
   onSave: (expense: Expense, date: string) => void;
   closeModal: () => void;
+  editMode?: boolean;
 };
 
 const ExpenseForm: React.FC<ExpenseFormProps> = ({
   closeModal,
   onSave,
+  editMode = false,
   initialData,
 }) => {
   const { id: travelId } = useParams<{ id: string }>();
   const { state } = useTravelContext();
-  const travel = state.travels.find((t) => t.id === state.selectedTravelID);
+  const travel = state.travels.find((t) => t.id === travelId);
   const { customCurrency, conversionRate } = travel!.dailyBudget;
 
   const {
@@ -72,7 +74,7 @@ const ExpenseForm: React.FC<ExpenseFormProps> = ({
     if (!travelId) return;
 
     const expense = {
-      id: uuidv4(),
+      id: initialData ? initialData.id : uuidv4(),
       title: data.title,
       description: data.description,
       amountUSD:
@@ -100,7 +102,12 @@ const ExpenseForm: React.FC<ExpenseFormProps> = ({
         className="border p-2 w-full"
       />
 
-      <input type="date" {...register("date")} className="border p-2 w-full" />
+      <input
+        type="date"
+        disabled={editMode}
+        {...register("date")}
+        className="border p-2 w-full"
+      />
       {errors.date && <p className="text-red-500">Fecha requerida</p>}
 
       <input
@@ -138,7 +145,7 @@ const ExpenseForm: React.FC<ExpenseFormProps> = ({
           Cancelar
         </button>
         <button type="submit" className="bg-green-500 text-white px-4 py-2">
-          Agregar
+          Guardar
         </button>
       </div>
     </form>

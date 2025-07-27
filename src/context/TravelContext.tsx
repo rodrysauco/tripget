@@ -18,6 +18,18 @@ type State = {
 type Action =
   | { type: "ADD_TRAVEL"; payload: Travel }
   | { type: "ADD_EXPENSE"; travelId: string; dayDate: string; expense: Expense }
+  | {
+      type: "DELETE_EXPENSE";
+      travelId: string;
+      dayDate: string;
+      expenseId: string;
+    }
+  | {
+      type: "UPDATE_EXPENSE";
+      travelId: string;
+      dayDate: string;
+      expense: Expense;
+    }
   | { type: "ENSURE_DAY"; travelId: string; dayDate: string }
   | { type: "LOAD_TRAVELS"; payload: Travel[] }
   | { type: "SELECT_TRAVEL"; payload: string };
@@ -91,6 +103,66 @@ function reducer(state: State, action: Action): State {
                 ...day,
                 expenses: newExpenses,
                 totalAmount,
+              };
+            }),
+          };
+        }),
+      };
+
+    case "UPDATE_EXPENSE":
+      return {
+        ...state,
+        travels: state.travels.map((travel) => {
+          if (travel.id !== action.travelId) return travel;
+
+          return {
+            ...travel,
+            days: travel.days.map((day) => {
+              if (day.date !== action.dayDate) return day;
+
+              const updatedExpenses = day.expenses.map((exp) => {
+                if (exp.id === action.expense.id) {
+                  return action.expense;
+                } else {
+                  return exp;
+                }
+              });
+
+              return {
+                ...day,
+                expenses: updatedExpenses,
+                totalAmount: updatedExpenses.reduce(
+                  (sum, exp) => sum + exp.amountUSD,
+                  0
+                ),
+              };
+            }),
+          };
+        }),
+      };
+
+    case "DELETE_EXPENSE":
+      return {
+        ...state,
+        travels: state.travels.map((travel) => {
+          if (travel.id !== action.travelId) return travel;
+
+          return {
+            ...travel,
+            days: travel.days.map((day) => {
+              if (day.date !== action.dayDate) return day;
+
+              const updatedExpenses = day.expenses.filter(
+                (exp) => exp.id !== action.expenseId
+              );
+
+              return {
+                ...day,
+                expenses: updatedExpenses,
+                totalAmount: updatedExpenses.reduce(
+                  (sum, exp) => sum + exp.amountUSD,
+                  0
+                ),
               };
             }),
           };
