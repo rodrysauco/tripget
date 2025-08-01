@@ -37,11 +37,23 @@ const TravelDetails: React.FC = () => {
 
   return (
     <div className="flex flex-col justify-center items-center">
-      <button className="self-start p-1 m-2 text-[14px] flex gap-1 border border-slate-400 rounded text-slate-400" onClick={goBack}> <ArrowLeftIcon className="w-5 h-5"/>Volver</button>
-      <div
-        className={`${total > 0 ? "mb-2 text-green-600" : "mb-2 text-red-600"}`}
+      <button
+        className="self-start p-1 m-2 text-[14px] flex gap-1 border border-slate-400 rounded text-slate-400"
+        onClick={goBack}
       >
-        Balance: {total.toFixed(2)}
+        {" "}
+        <ArrowLeftIcon className="w-5 h-5" />
+        Volver
+      </button>
+      <div className="flex gap-1">
+        <p>Dias: {travel.days.length} Balance:</p>
+        <p
+          className={`${
+            total > 0 ? "mb-2 text-green-600" : "mb-2 text-red-600"
+          }`}
+        >
+          {total.toFixed(2)}
+        </p>
       </div>
       <DayList days={travel?.days} goToDay={handleNavigate} />
     </div>

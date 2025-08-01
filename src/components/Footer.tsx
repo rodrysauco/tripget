@@ -34,9 +34,9 @@ const Footer: React.FC = () => {
       <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2">
         <button
           onClick={openModal}
-          className="bg-green-600 w-[65px] h-[65px] text-white text-[36px] rounded"
+          className="flex justify-center text-white"
         >
-          <PlusCircleIcon className="w-5 h-5"/>
+          <PlusCircleIcon className="w-[60px] text-green-600"/>
         </button>
       </div>
       <div className="font-semibold">
